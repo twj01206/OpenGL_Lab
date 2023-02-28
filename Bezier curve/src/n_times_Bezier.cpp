@@ -1,15 +1,15 @@
 /*
-*»ùÓÚBernstein»ùº¯Êı µÄ¹«Ê½×ª»¯Îª´úÂë±ØĞëÊìÏ¤ÊìÁ·  
-*ÖØµãÕÆÎÕBezierÇúÏßµÄ»æ»­ 
+*åŸºäºBernsteinåŸºå‡½æ•° çš„å…¬å¼è½¬åŒ–ä¸ºä»£ç å¿…é¡»ç†Ÿæ‚‰ç†Ÿç»ƒ  
+*é‡ç‚¹æŒæ¡Bezieræ›²çº¿çš„ç»˜ç”» 
 */
 #include <glut.h>
 #include <cmath>
-#define CON_POINTS 4//¿ØÖÆµãÊé  µ±Òª»æ»­n´ÎBezierÔòĞŞ¸ÄÎªn+1£¨n+1¸ö¿ØÖÆµã£©
+#define CON_POINTS 4//æ§åˆ¶ç‚¹ä¹¦  å½“è¦ç»˜ç”»næ¬¡Bezieråˆ™ä¿®æ”¹ä¸ºn+1ï¼ˆn+1ä¸ªæ§åˆ¶ç‚¹ï¼‰
 int mask = -1;
 struct Point_xy {
     double x, y;
 };
-Point_xy vec[CON_POINTS];//¶¨ÒåµãÊı×é
+Point_xy vec[CON_POINTS];//å®šä¹‰ç‚¹æ•°ç»„
 
 
 double B(int n, int i, float t) {
@@ -33,7 +33,7 @@ Point_xy Bezier(float t) {
     }
     return p;
 }
-// »­Ïß
+// ç”»çº¿
 void DrawLine(Point_xy p1, Point_xy p2) {
     glColor3f(1.0f, 0.0f, 0.5f);
     glLineWidth(2.0f);
@@ -45,7 +45,7 @@ void DrawLine(Point_xy p1, Point_xy p2) {
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-    //»­µã
+    //ç”»ç‚¹
     glPointSize(10.0f);
     glColor3f(0.0, 0.0, 1.0);
     glBegin(GL_POINTS);
@@ -68,12 +68,12 @@ void display() {
     glutSwapBuffers();
 }
 
-void init() {//³õÊ¼»¯
+void init() {//åˆå§‹åŒ–
     glClearColor(1.0, 1.0, 1.0, 0.0);
     glShadeModel(GL_FLAT);
     for (int d = 0; d < CON_POINTS; d++) {
         vec[d].x = 10 + 100 * d;
-        vec[d].y = 500 - 10 *d * d;//Éú³É²»ÔÚÍ¬Ò»Ö±ÏßµÄÈô¸Éµã
+        vec[d].y = 500 - 10 *d * d;//ç”Ÿæˆä¸åœ¨åŒä¸€ç›´çº¿çš„è‹¥å¹²ç‚¹
     }
 }
 
@@ -131,5 +131,5 @@ int main(int argc, char** argv) {
 
 
 /*
-²Î¿¼µØÖ·£ºhttps://blog.csdn.net/qq_42276781/article/details/89301281
+å‚è€ƒåœ°å€ï¼šhttps://blog.csdn.net/qq_42276781/article/details/89301281
 */
