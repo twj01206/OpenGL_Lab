@@ -1,49 +1,49 @@
 /*******************************************************************
-* @brief : Bezier�����滭
+* @brief : Bezier基本绘画
 * @author : wj
 * @date : 2023/2/27 21:46
 *******************************************************************/
 
 /*
-* 1.���ڵ����⣺���Ƶ�ĳ�ʼ��ֻ��4��,�洢�γɵĵ����������ڴ��С����
-* 2.�ڻ滭�߶�ʱ�� glBegin()��glend()�Ų�����forѭ���е�����
-* 3.t �ľ��ȵ����⣬��һ���Ļ���Bezier������ͷ������ʼ���Ƶ�
-* 4.���������黹Ҫ�����о����ر�������Ļ������ı任�������ֹ�������Ƶ��ƶ�ʱ����겻�ڵ��ϣ�����ƫ�� 
-* 5.!!!!�������������⣡����  �������֪����ô���������
+* 1.存在的问题：控制点的初始化只有4个,存储形成的点的数组分配内存大小问题
+* 2.在绘画线段时候 glBegin()和glend()放不放入for循环中的问题
+* 3.t 的精度的问题，不一样的话，Bezier的曲线头不在起始控制点
+* 4.鼠标引动这块还要继续研究，特别是在屏幕上坐标的变换，曾出现过点击控制点移动时候鼠标不在点上，产生偏移 
+* 5.!!!!存在走样的问题！！！  这个还不知道怎么解决！！！
 */
 /*
-˼·��ܣ�bezier���ߣ��滭��չʾ
+思路框架：bezier曲线，绘画，展示
 */
 #include<glut.h>
 #include<cmath>
-int mask = -1;//�����Ӧ����
-int n = 4;//4�����Ƶ�
-GLfloat Cp[4][2] = {//���Ƶ��x,y����
+int mask = -1;//鼠标响应控制
+int n = 4;//4个控制点
+GLfloat Cp[4][2] = {//控制点的x,y坐标
 	{ -0.1f,  0.9f },
 	{ -0.5f,  0.2f },
 	{  0.5f, -0.3f },
 	{  0.1f, 0.4f },
 };
-//�ҵ�
+//找点
 void deCateljau(GLfloat Bezier[][2])
 {
-	//���x,y
+	//存放x,y
 	float x[4]={};
 	float y[4]={};
-	int count = 0;//��¼bezier�켣��
+	int count = 0;//记录bezier轨迹点
 	
-	for (double t = 0.0; t <= 1; t += 0.1)//t��[0��1]��  
+	for (double t = 0.0; t <= 1; t += 0.1)//t在[0，1]内  
 	{
 		for (int i = 0; i < n; i++) {
-			x[i] = Cp[i][0];  //����Ҫ�ѿ��Ƶ�ȫ���洢�������ǳ��������������ʹ������Ĵ��뵼�³���
+			x[i] = Cp[i][0];  //必须要把控制点全部存储，若不是出错，曾做过多次使用下面的传入导致出错
 			y[i] = Cp[i][1];
 		}
 
 		for (int i = 1; i < n; i++)
 		{
-			for (int j = 0; j < n - i; j++)//n-i��ȥ�����Ƶ����˼��ÿ�ε�������ǰһ����һ����
+			for (int j = 0; j < n - i; j++)//n-i是去除控制点的意思，每次迭代都比前一次少一个点
 			{
-				//if (i == 1) {//ֱ��ʹ������Ŀ��Ƶ�������ҳ������������Ƶ�֮��ĵ�
+				//if (i == 1) {//直接使用最初的控制点迭代，找出相邻两个控制点之间的点
 				//	x[i] = (1 - t) * cp[i][0] + t * cp[i + 1][0];
 				//	y[i] = (1 - t) * cp[i][1] + t * cp[i + 1][1];
 				//}
@@ -52,54 +52,54 @@ void deCateljau(GLfloat Bezier[][2])
 			}
 
 		}
-		//�������εĵ����������Ի��һ���� �������[0,1]�ڵ��˶��켣����bezier����
+		//经过历次的迭代，最后可以获得一个点 这个点在[0,1]内的运动轨迹就是bezier曲线
 		Bezier[count][0] = x[0];
 		Bezier[count][1] = y[0];
 		count++;
 	}
 }
 
-//����
+//绘制
 void display() {
 	glClearColor(1.0, 1.0, 1.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);//��ǰ��д����ɫ����
+	glClear(GL_COLOR_BUFFER_BIT);//当前可写的颜色缓冲
 	
-	//���ƿ��Ƶ�
+	//绘制控制点
 	glPointSize(10);
 	glColor3f(0.5f, 1.0f, 0.0f);
 	for (int i = 0; i < 4; i++) {
 		glBegin(GL_POINTS);
-		//glVertex2f��glVertex2fv ���ߵĲ������Ͳ�ͬ��һ��GLfloat��һ��ָ��
-		glVertex2fv(&Cp[i][0]);//v��ʾ���ݵļ���������ʹ��ָ��ķ�ʽ
+		//glVertex2f和glVertex2fv 两者的参数类型不同，一个GLfloat，一个指针
+		glVertex2fv(&Cp[i][0]);//v表示传递的几个参数将使用指针的方式
 		glEnd();
 
 	}
 
-	//���Ƶ�һ�����Ƶ㵽���һ�����Ƶĵ���߶Σ�
+	//绘制第一个控制点到最后一个控制的点的线段，
 	glColor3f(0.5f, 0.5f, 0.5f);
-	glBegin(GL_LINE_STRIP);//���ƴӵ�һ�����㵽���һ����������������һ���߶�
+	glBegin(GL_LINE_STRIP);//绘制从第一个顶点到最后一个顶点依次相连的一组线段
 	for (int i = 0; i < 4; i++) {
 		glVertex2fv(&Cp[i][0]);
 	}
 	glEnd();
 
-	//����Bezier����
+	//绘制Bezier曲线
 	GLfloat Bezier[11][2] = { 0 };
 	deCateljau(Bezier);
 
 	glColor3f(1.0, 0.0, 0.0);
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < 11; i++) {
-		glVertex2fv(Bezier[i]);//ָ������
+		glVertex2fv(Bezier[i]);//指定顶点
 
 	}
 	glEnd();
 
-	glFlush();//ǿ��ˢ�»��壬��֤��ͼ�����ִ��
+	glFlush();//强制刷新缓冲，保证绘图命令将被执行
 
 }
 
-//�����Ӧ  �仯
+//鼠标响应  变化
 void mouseClick(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON)
@@ -121,7 +121,7 @@ void mouseClick(int button, int state, int x, int y)
 	}
 }
 
-// ����ƶ�
+// 鼠标移动
 void mouseMove(int x, int y)
 {
 	if (mask != -1) {
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(400, 400);
-	glutCreateWindow("Bezier���߻滭");
+	glutCreateWindow("Bezier曲线绘画");
 	glutDisplayFunc(&display);
 
 	glutMouseFunc(mouseClick);
