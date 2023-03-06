@@ -1,7 +1,7 @@
 #include<glut.h>
 
 void display() {
-	//»æ»­Ö±Ïß
+	//ç»˜ç”»ç›´çº¿
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -11,11 +11,11 @@ void display() {
 	glVertex2f(-0.6, 0.4);
 	glVertex2f(0.3, 0.4);
 	glEnd();
-	//»æ»­ĞéÏß
+	//ç»˜ç”»è™šçº¿
 	glColor3f(1, 1.0, 0.8);
-	glLineStipple(2, 0X00FF);//½¨Á¢»­ÏßµÄÄ£Ê½
-	glEnable(GL_LINE_STIPPLE);//´ò¿ªÄ£Ê½
-	glBegin(GL_LINES);//  GL_LINE_STRIP ²»±ÕºÏÕÛÏß
+	glLineStipple(2, 0X00FF);//å»ºç«‹ç”»çº¿çš„æ¨¡å¼
+	glEnable(GL_LINE_STIPPLE);//æ‰“å¼€æ¨¡å¼
+	glBegin(GL_LINES);//  GL_LINE_STRIP ä¸é—­åˆæŠ˜çº¿
 	glVertex2f(0.0, 0.5);
 	glVertex2f(0.5, 0.5);
 	glEnd();
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(0, 0);
-	glutCreateWindow("»æ»­Ö±Ïß");
+	glutCreateWindow("ç»˜ç”»ç›´çº¿");
 	glutDisplayFunc(display);
 	glutMainLoop();
 	return 0;
